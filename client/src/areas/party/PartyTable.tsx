@@ -30,6 +30,7 @@ class Stats {
   public uniqWep: number = 0;
   public uniqOth: number = 0;
   public set: number = 0;
+  public rune: number = 0;
   public total: number = 0;
   public itemScore: number = 0;
 
@@ -73,6 +74,7 @@ export class PartyTable extends React.Component<
           ? user.data.uniqueOther.missing
           : ItemTotal.Other;
         statRow.set = user.data ? user.data.sets.missing : ItemTotal.Sets;
+        statRow.rune = user.data ? user.data.runes.missing : ItemTotal.Runes;
         statRow.itemScore = user.data ? user.data.itemScore : 0;
         statRow.total =
           statRow.uniqArm + statRow.uniqWep + statRow.uniqOth + statRow.set;
@@ -126,6 +128,12 @@ export class PartyTable extends React.Component<
                   text="Sets"
                   sortText="set"
                   showIcon={this.state.sorted === "set"}
+                />
+                <DataTableColumnHeader
+                  onClick={this.changeSortingState}
+                  text="Runes"
+                  sortText="rune"
+                  showIcon={this.state.sorted === "rune"}
                 />
                 <DataTableColumnHeader
                   onClick={this.changeSortingState}
@@ -184,6 +192,7 @@ export class PartyTable extends React.Component<
         <StyledTableCell>{stats.uniqWep}</StyledTableCell>
         <StyledTableCell>{stats.uniqOth}</StyledTableCell>
         <StyledTableCell>{stats.set}</StyledTableCell>
+        <StyledTableCell>{stats.rune}</StyledTableCell>
         <StyledTableCell>{stats.itemScore}</StyledTableCell>
       </TableRow>
     );

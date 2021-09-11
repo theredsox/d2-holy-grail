@@ -71,7 +71,7 @@ export class ItemScoreCalculator {
         () => data.runes,
         new MissingItems()
       );
-      partyGrailData.sets.missing = missingRunes.missing;
+      partyGrailData.runes.missing = missingRunes.missing;
       partyGrailData.itemScore += missingRunes.score;
     }
     return partyGrailData;
