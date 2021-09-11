@@ -126,11 +126,11 @@ export class StatisticsTable extends React.Component<
           <StyledTable>
             <TableHead>
               <TableRow>
-                <TableCell>&nbsp;</TableCell>
-                <TableCell align="right">Exist</TableCell>
-                <TableCell align="right">Owned</TableCell>
-                <TableCell align="right">Remaining</TableCell>
-                <TableCell align="right">% Completed</TableCell>
+                <StyledCell>&nbsp;</StyledCell>
+                <StyledCell align="right">Exist</StyledCell>
+                <StyledCell align="right">Owned</StyledCell>
+                <StyledCell align="right">Remaining</StyledCell>
+                <StyledCell align="right">% Completed</StyledCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -197,15 +197,17 @@ export class StatisticsTable extends React.Component<
 
 const StyledPaper: React.ComponentType<PaperProps> = styled(Paper)`
   && {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0px auto auto;
     overflow-x: auto;
+    width: calc(100vw - 217px); 
   }
 `;
 
 const StyledTable: React.ComponentType<TableProps> = styled(Table)`
   && {
-    max-width: 600px;
+    max-width: 800px;
+    width: calc(100vw - 217px); 
   }
 `;
 
@@ -215,6 +217,7 @@ const RowHeader = styled.div`
 
 const StyledCell: React.ComponentType<TableCellProps> = styled(TableCell)`
   && {
-    padding: 10px 40px 10px 16px;
+    padding: 10px 5px 10px 5px;
+    white-space: nowrap;
   }
 `;
