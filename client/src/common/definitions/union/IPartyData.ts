@@ -12,6 +12,7 @@ export interface IUserGrailData {
   uniqueWeapons?: ICategoryStatsData;
   uniqueOther?: ICategoryStatsData;
   sets?: ICategoryStatsData;
+  runes?: ICategoryStatsData;
   itemScore?: number;
 }
 

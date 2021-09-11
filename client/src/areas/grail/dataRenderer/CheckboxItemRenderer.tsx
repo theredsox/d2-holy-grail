@@ -5,6 +5,8 @@ import { Item } from "../../../common/definitions/union/Item";
 import { ItemNameRenderer } from "./ItemNameRenderer";
 import { IItemProps } from "./CheckboxItemRenderer";
 import styled from "styled-components";
+import { Util } from "../../../common/utils/Util";
+import { ItemImageRenderer } from "./ItemImageRenderer";
 
 export interface IItemProps {
   item: Item;
@@ -34,8 +36,16 @@ export class CheckboxItemRenderer extends React.Component<
           disabled={GrailManager.current.isReadOnly}
           checked={!!this.state.item.wasFound}
           onChange={event => this.onItemCheckBoxChanged(this.state.item, event)}
+          style={{ padding: "2px" }}
           value={this.props.itemName}
         />
+        { Util.hasImage(this.props) &&
+          <ItemImageRenderer
+            itemName={this.props.itemName}
+            item={this.props.item}
+            ancestorKeys={this.props.ancestorKeys}
+          />
+        }
         <ItemNameRenderer
           itemName={this.props.itemName}
           item={this.props.item}

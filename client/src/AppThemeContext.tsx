@@ -19,6 +19,13 @@ export const defaultTheme: IAppTheme = {
     palette: {
       primary: purple,
       secondary: green
+    },
+    overrides: {
+      MuiPaper: {
+        root: {
+            margin: '10px'
+        },
+      },
     }
   },
   title: "Diablo II - Holy Grail"

@@ -20,6 +20,7 @@ interface IImportDialogState {
   weapons?: string;
   other?: string;
   sets?: string;
+  runes?: string;
   isImporting?: boolean;
   numberOfImportedItems?: number;
 }
@@ -48,7 +49,8 @@ export class ImportDialog extends React.Component<
               (!this.state.armor &&
                 !this.state.weapons &&
                 !this.state.other &&
-                !this.state.sets)
+                !this.state.sets &&
+                !this.state.runes)
             }
           />
         )}
@@ -83,6 +85,7 @@ export class ImportDialog extends React.Component<
           {this.getFileUploader("Unique Weapons", "weapons")}
           {this.getFileUploader("Unique Other", "other")}
           {this.getFileUploader("Sets", "sets")}
+          {this.getFileUploader("Runes", "runes")}
         </div>
       </CloseableDialog>
     );
@@ -108,6 +111,10 @@ export class ImportDialog extends React.Component<
       importedFoundItems
     );
     this.importSection(data.sets, this.state.sets, importedFoundItems);
+    if (importedFoundItems.length) {
+      GrailManager.current.updateGrailCache();
+    }
+    this.importSection(data.runes, this.state.runes, importedFoundItems);
     if (importedFoundItems.length) {
       GrailManager.current.updateGrailCache();
     }

@@ -4,7 +4,8 @@ import { items } from "../ItemList.tsx";
 enum ItemCategory {
   Unique = "unique",
   Set = "set",
-  Runeword = "runeword"
+  Runeword = "runeword",
+  Rune = "rune"
 }
 
 export class ItemsController {
@@ -37,6 +38,21 @@ export class ItemsController {
       res,
       items.runewords[runewordName],
       ItemCategory.Runeword
+    );
+  };
+
+  public getRune = (req: Request, res: Response) => {
+    const runeName = req.params.runeName;
+
+    if (!runeName) {
+      res.status(400).send();
+      return;
+    }
+
+    ItemsController.getItemValue(
+      res,
+      items.runes[runeName],
+      ItemCategory.Rune
     );
   };
 

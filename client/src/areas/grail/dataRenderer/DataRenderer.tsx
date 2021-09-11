@@ -9,6 +9,7 @@ import { GrailManager } from "../GrailManager";
 import { CountItemRenderer } from "./CountItemRenderer";
 import { LevelRenderer } from "./LevelRenderer";
 import styled, { css } from "styled-components";
+import ImageRenderer from "./propsRenderer/ImageRenderer";
 
 export interface ILevels {
   level?: number;
@@ -31,6 +32,8 @@ function getDataRendererTypography(level: number): StyledLevelRenderer {
       return Level2Renderer;
     case 3:
       return Level3Renderer;
+    case 4:
+      return Level4Renderer;
     default:
       return BaseDataRenderer;
   }
@@ -53,25 +56,41 @@ export const DataRenderer: React.FunctionComponent<
 
   const DataRendererTypography = getDataRendererTypography(levels.level);
 
+  const uniques = props.ancestorKeys && props.ancestorKeys.indexOf("Uniques") > -1;
+  const level1sets = levels.level == 1 && props.ancestorKeys && props.ancestorKeys.indexOf("Sets") > -1;
+  const fullWidthClass = !level1sets ? "FullWidth" : "";
+
   return (
     <DataRendererTypography
       component="div"
       variant={mapLevelToTypographyVariant(levels.variantLevel)}
       root={props.isRecursive ? undefined : true.toString()}
+      className={uniques ? "uniquesLayout" : ""}
     >
       {Object.keys(props.data).map(key => {
         return (
-          <div key={`${key}-${levels.level}`}>
-            {
-              <NextData
-                levelKey={key}
-                nextData={props.data[key]}
-                ancestorKeys={props.ancestorKeys}
-                levels={levels}
-                modifyLevels={props.modifyLevels}
-              />
+          <DataContainer key={`dc-${key}-${levels.level}`}>
+            { level1sets && (
+                <ImageRenderer
+                  itemName={`${
+                    process.env.PUBLIC_URL
+                  }/images/sets/${key.replace(/ /g, "-").replace(/'/g, "")}.png`}
+                  item={props.data}>
+                </ImageRenderer>
+              )
             }
-          </div>
+            <div key={`${key}-${levels.level}`} className={`${fullWidthClass}`}>
+              {
+                <NextData
+                  levelKey={key}
+                  nextData={props.data[key]}
+                  ancestorKeys={props.ancestorKeys}
+                  levels={levels}
+                  modifyLevels={props.modifyLevels}
+                />
+              }
+            </div>
+          </DataContainer>
         );
       })}
     </DataRendererTypography>
@@ -161,8 +180,7 @@ const BaseDataRenderer: StyledLevelRenderer = styled(Typography)<
     ${p =>
       p.root
         ? css`
-            max-width: 1000px;
-            margin: auto;
+            
           `
         : null}
   }
@@ -174,8 +192,58 @@ const Level1Renderer: StyledLevelRenderer = styled(BaseDataRenderer)<
   && {
     display: flex;
     flex-wrap: wrap;
+    gap: 10px 0px;
+    width: calc(100vw - 217px);
+
     & > * {
-      flex: 0 0 33.3333%;
+      border: 1px solid #dcdcdc;
+      box-shadow: rgb(13 13 13 / 20%) 0px 4px 8px 0px;
+      flex: 0 0 100%;
+      padding: 10px;
+    }
+
+    @media (min-width: 900px) {
+      &:not(.uniquesLayout) {
+        gap: 10px 5px;
+      }
+
+      &:not(.uniquesLayout) > * {
+        flex: 0 0 calc(50% - 5px)
+      }
+    }
+
+    @media (min-width: 1000px) {
+      &.uniquesLayout {
+        gap: 10px 5px;
+      }
+
+      &.uniquesLayout > * {
+        flex: 0 0 calc(50% - 5px)
+      }
+    }
+
+    @media (min-width: 1350px) {
+      &:not(.uniquesLayout) > * {
+        flex: 0 0 calc(33.3333% - 5px)
+      }
+    }
+
+    @media (min-width: 1700px) {
+      &.uniquesLayout > * {
+        flex: 0 0 calc(33.3333% - 5px)
+      }
+    }
+    
+    @media (min-width: 1700px) {
+      &:not(.uniquesLayout) > * {
+        flex: 0 0 calc(25% - 5px)
+      }
+    }
+
+    @media (min-width: 2100px) {
+      &.uniquesLayout > * {
+        flex: 0 0 calc(25% - 5px)
+      }
     }
   }
 `;
@@ -184,7 +252,14 @@ const Level2Renderer: StyledLevelRenderer = styled(BaseDataRenderer)<
   IStyledLevelRendererProps
 >`
   && {
-    padding: ${p => p.theme.spacing(1)}px;
+    padding: 0px;
+
+    @media (min-width: 650px) {
+      &.uniquesLayout {
+        flex-wrap: wrap;
+        display: flex;
+      }
+    }
   }
 `;
 
@@ -194,4 +269,53 @@ const Level3Renderer: StyledLevelRenderer = styled(BaseDataRenderer)<
   && {
     padding-left: ${p => p.theme.spacing(1) * 0.75}px;
   }
+`;
+
+const Level4Renderer: StyledLevelRenderer = styled(BaseDataRenderer)<
+  IStyledLevelRendererProps
+>`
+  && {
+    display: flex;
+    flex-wrap: wrap;
+    & > * {
+      flex: 0 0 100%;
+    }
+
+    @media (min-width: 530px) {
+      & > * {
+        flex: 0 0 50%;
+      }
+    }
+
+    @media (min-width: 695px) {
+      & > * {
+        flex: 0 0 33.3333%;
+      }
+    }
+
+    @media (min-width: 860px) {
+      & > * {
+        flex: 0 0 25%;
+      }
+    }
+  }
+`;
+
+const DataContainer = styled.div`
+  display: flex;
+  flex: 0 0 calc(50% - 5px);
+`;
+
+const ImageContainer = styled.div`
+  max-width: 150px;
+  overflow: hidden;
+  text-indent: -145px;
+  max-height: 200px;
+  margin-left: 20px;
+`;
+
+const Image = styled.img`
+  object-fit: scale-down;
+  width: 300px;
+  height: 100%;
 `;

@@ -1,0 +1,20 @@
+.MuiDialog-container .MuiDialog-paper {
+    margin: 24px 0px;
+    max-height: 100%;
+}
+
+.MuiAppBar-root {
+    margin: 0px !important;
+}
+
+.MuiDialog-container .MuiDialog-paper .MuiDialogTitle-root {
+    padding: 8px 24px;
+}
+
+.MuiDialog-container .MuiDialog-paper .MuiDialogContent-root {
+    padding: 0px 24px;
+}
+
+.FullWidth {
+    width: 100%;
+}

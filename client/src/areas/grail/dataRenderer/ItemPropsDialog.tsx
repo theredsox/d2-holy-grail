@@ -11,6 +11,8 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { RunewordInfoRenderer } from "./propsRenderer/RunewordInfoRenderer";
 import { ItemInfoRenderer } from "./propsRenderer/ItemInfoRenderer";
 import { IGrailAreaRouterParams } from "../../../RouteManager";
+import { RuneInfoRenderer } from "./propsRenderer/RuneInfoRenderer";
+import { TabType } from "../TabType";
 
 export interface IItemPropsDialogProps {
   item: Item;
@@ -40,6 +42,7 @@ class ItemPropsDialogInternal extends React.PureComponent<
 
   public render() {
     const grailMode = this.props.match.params.grailMode;
+    const tabType = this.props.match.params.tabType;
 
     return (
       <CloseableDialog
@@ -57,12 +60,14 @@ class ItemPropsDialogInternal extends React.PureComponent<
         )}
       >
         <ContentContainer>
-          {this.renderContent()}
           {grailMode === GrailMode.Runeword ? (
             <RunewordInfoRenderer runewordName={this.props.itemName} />
+          ) : (tabType === TabType.Runes ? (
+            <RuneInfoRenderer runeName={this.props.itemName} />
           ) : (
             <ItemInfoRenderer itemName={this.props.itemName} />
-          )}
+          ))}
+          {this.renderContent()}
         </ContentContainer>
       </CloseableDialog>
     );
@@ -77,10 +82,12 @@ class ItemPropsDialogInternal extends React.PureComponent<
   };
 
   private renderContent() {
+    const grailMode = this.props.match.params.grailMode;
+
     if (GrailManager.current.isReadOnly) {
       return (
         <>
-          {this.state.isPerfect && (
+          {grailMode !== GrailMode.Runeword && this.state.isPerfect && (
             <ReadOnlyPerfectContainer>
               <Icon>star</Icon> This item is perfect! <Icon>star</Icon>
             </ReadOnlyPerfectContainer>
@@ -98,13 +105,15 @@ class ItemPropsDialogInternal extends React.PureComponent<
 
     return (
       <>
-        <PerfectContainer>
-          <PerfectCheckbox
-            checked={!!this.state.isPerfect}
-            onChange={e => this.setState({ isPerfect: e.target.checked })}
-          />
-          <span>Is perfect</span>
-        </PerfectContainer>
+        {grailMode !== GrailMode.Runeword && (
+          <PerfectContainer>
+            <PerfectCheckbox
+              checked={!!this.state.isPerfect}
+              onChange={e => this.setState({ isPerfect: e.target.checked })}
+            />
+            <span>Is perfect</span>
+          </PerfectContainer>
+        )}
         <TextArea
           value={this.state.itemNote}
           onChange={e => this.setState({ itemNote: e.target.value })}
@@ -151,6 +160,6 @@ const PerfectContainer = styled.div`
 
 const PerfectCheckbox = styled(Checkbox)`
   && {
-    padding-left: 0;
+    padding: 4px;
   }
 `;

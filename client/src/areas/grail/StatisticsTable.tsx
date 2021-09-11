@@ -2,7 +2,7 @@ import * as React from "react";
 import { Util } from "../../common/utils/Util";
 import Table, { TableProps } from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
+import TableCell, { TableCellProps } from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper, { PaperProps } from "@material-ui/core/Paper";
@@ -97,7 +97,8 @@ export class StatisticsTable extends React.Component<
             () => this.state.data.uniques.other,
             new Stats("Unique Other")
           ),
-          this.calculateStats(() => this.state.data.sets, new Stats("Sets"))
+          this.calculateStats(() => this.state.data.sets, new Stats("Sets")),
+          this.calculateStats(() => this.state.data.runes, new Stats("Runes"))
         ];
         break;
     }
@@ -146,20 +147,20 @@ export class StatisticsTable extends React.Component<
   private static renderRow(stats: Stats, isSelected?: boolean) {
     return (
       <TableRow key={`${stats.name}Stat`} hover={true} selected={isSelected}>
-        <TableCell component="th" scope="row">
+        <StyledCell component="th" scope="row">
           <RowHeader>
             {stats.icon && <Icon title={stats.iconTooltip}>{stats.icon}</Icon>}
             {!stats.icon && stats.name}
           </RowHeader>
-        </TableCell>
-        <TableCell align="right">{stats.total}</TableCell>
-        <TableCell align="right">{stats.renderValue}</TableCell>
-        <TableCell align="right">{stats.total - stats.renderValue}</TableCell>
-        <TableCell align="right">
+        </StyledCell>
+        <StyledCell align="right">{stats.total}</StyledCell>
+        <StyledCell align="right">{stats.renderValue}</StyledCell>
+        <StyledCell align="right">{stats.total - stats.renderValue}</StyledCell>
+        <StyledCell align="right">
           {(stats.total ? (stats.renderValue * 100) / stats.total : 0).toFixed(
             2
           )}
-        </TableCell>
+        </StyledCell>
       </TableRow>
     );
   }
@@ -196,18 +197,24 @@ export class StatisticsTable extends React.Component<
 
 const StyledPaper: React.ComponentType<PaperProps> = styled(Paper)`
   && {
-    max-width: 700px;
-    margin: ${p => p.theme.spacing(1) * 3}px auto auto;
+    max-width: 600px;
+    margin: 0px auto auto;
     overflow-x: auto;
   }
 `;
 
 const StyledTable: React.ComponentType<TableProps> = styled(Table)`
   && {
-    max-width: 700px;
+    max-width: 600px;
   }
 `;
 
 const RowHeader = styled.div`
   display: flex;
+`;
+
+const StyledCell: React.ComponentType<TableCellProps> = styled(TableCell)`
+  && {
+    padding: 10px 40px 10px 16px;
+  }
 `;

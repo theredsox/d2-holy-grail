@@ -1,6 +1,6 @@
 import * as React from "react";
 import Dialog from "@material-ui/core/Dialog/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
+import DialogTitle, { DialogTitleProps } from "@material-ui/core/DialogTitle/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions/DialogActions";
 import Icon, { IconProps } from "@material-ui/core/Icon/Icon";
@@ -19,7 +19,7 @@ export const CloseableDialog: React.FunctionComponent<
 > = props => {
   return (
     <Dialog open={true} onClose={() => props.onDialogClosed()}>
-      <DialogTitle id="form-dialog-title">{props.title}</DialogTitle>
+      <StyledDialogTitle id="form-dialog-title">{props.title}</StyledDialogTitle>
       <DialogContent>
         <div className={props.className}>
           <CloseIcon onClick={() => props.onDialogClosed()}>close</CloseIcon>
@@ -30,6 +30,13 @@ export const CloseableDialog: React.FunctionComponent<
     </Dialog>
   );
 };
+
+const StyledDialogTitle: React.ComponentType<DialogTitleProps> = styled(DialogTitle)`
+  && {
+    padding-bottom: 8px;
+    text-decoration: underline;
+  }
+`;
 
 const CloseIcon: React.ComponentType<IconProps> = styled(Icon)`
   && {

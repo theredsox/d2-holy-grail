@@ -26,7 +26,7 @@ interface ITabRendererState {
   hasActiveSearch: boolean;
 }
 
-const runewordLevels: ILevels = { variantLevel: 4, level: 1 };
+const runewordLevels: ILevels = { variantLevel: 4, level: 4 };
 
 class TabRendererInternal extends React.Component<Props, ITabRendererState> {
   public constructor(props: Props) {
@@ -151,7 +151,8 @@ class TabRendererInternal extends React.Component<Props, ITabRendererState> {
             key="tabUniqueOther"
             value={TabType.UniqueOther}
           />,
-          <Tab label="Sets" key="tabSets" value={TabType.Sets} />
+          <Tab label="Sets" key="tabSets" value={TabType.Sets} />,
+          <Tab label="Runes" key="tabRunes" value={TabType.Runes} />
         ];
     }
   }
@@ -198,6 +199,14 @@ class TabRendererInternal extends React.Component<Props, ITabRendererState> {
             ancestorKeys={["Sets"]}
           />
         );
+      case TabType.Runes:
+        return (
+          <DataRenderer
+            data={this.dataToRender.runes}
+            levels={{ variantLevel: 1, level: 4 }}
+            ancestorKeys={["Runes"]}
+          />
+        );
       case TabType.Runewords:
         return (
           <DataRenderer data={this.dataToRender} levels={runewordLevels} />
@@ -230,7 +239,7 @@ export const TabRenderer = withRouter(TabRendererInternal);
 
 const TabContainer: React.FunctionComponent<{}> = props => {
   return (
-    <Typography component="div" style={{ padding: 8 * 3 }}>
+    <Typography component="div" style={{ padding: "10px 100px" }}>
       {props.children}
     </Typography>
   );

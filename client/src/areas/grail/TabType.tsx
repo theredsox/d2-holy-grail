@@ -4,6 +4,7 @@ export enum TabType {
   UniqueWeapons = "unique-weapons",
   UniqueOther = "unique-other",
   Sets = "sets",
+  Runes = "runes",
   SearchResults = "search",
   Runewords = "runewords"
 }

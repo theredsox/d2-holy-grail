@@ -4,6 +4,7 @@ import { IUniqueTypes } from "./IUniqueTypes";
 export interface IHolyGrailData {
   uniques: IUniqueItems;
   sets: ISetItems;
+  runes: IRuneItems;
 }
 
 export interface IUniqueItems {
@@ -104,4 +105,40 @@ export interface ISetItems {
   "Tal Rasha's Wrappings": IItems;
   "The Disciple": IItems;
   "Trang-Oul's Avatar": IItems;
+}
+
+export interface IRuneItems {
+  "El": IItems;
+  "Eld": IItems;
+  "Tir": IItems;
+  "Nef": IItems;
+  "Eth": IItems;
+  "Ith": IItems;
+  "Tal": IItems;
+  "Ral": IItems;
+  "Ort": IItems;
+  "Thul": IItems;
+  "Amn": IItems;
+  "Sol": IItems;
+  "Shael": IItems;
+  "Dol": IItems;
+  "Hel": IItems;
+  "Io": IItems;
+  "Lum": IItems;
+  "Ko": IItems;
+  "Fal": IItems;
+  "Lem": IItems;
+  "Pul": IItems;
+  "Um": IItems;
+  "Mal": IItems;
+  "Ist": IItems;
+  "Gul": IItems;
+  "Vex": IItems;
+  "Ohm": IItems;
+  "Lo": IItems;
+  "Sur": IItems;
+  "Ber": IItems;
+  "Jah": IItems;
+  "Cham": IItems;
+  "Zod": IItems;
 }

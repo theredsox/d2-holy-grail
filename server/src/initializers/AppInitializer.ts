@@ -52,6 +52,9 @@ function configureRoutes(db: Db, express: expressServer.Express): void {
   express
     .route("/api/runewords/:runewordName")
     .get(itemsController.getRuneword);
+  express
+    .route("/api/runes/:runeName")
+    .get(itemsController.getRune);
 
   express.route("/api/party").post(partyController.add);
 

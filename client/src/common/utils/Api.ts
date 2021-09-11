@@ -8,6 +8,7 @@ import { IGrailSettings } from "../definitions/union/IGrailSettings";
 import { IItemInfo } from "../definitions/api/IItemInfo";
 import { IRunewordInfo } from "../definitions/api/IRunewordInfo";
 import { IGrailStatistics } from "../definitions/api/IGrailStatistics";
+import { IRuneInfo } from "../definitions/api/IRuneInfo";
 
 export interface IApiResponse<T> {
   status: number;
@@ -32,6 +33,14 @@ export class Api {
   ): Observable<IApiResponse<IRunewordInfo>> {
     return this.fetchToObservable(
       fetch(`${Api.apiUrl}runewords/${runewordName}`)
+    );
+  }
+
+  public static getRune(
+    runeName: string
+  ): Observable<IApiResponse<IRuneInfo>> {
+    return this.fetchToObservable(
+      fetch(`${Api.apiUrl}runes/${runeName}`)
     );
   }
 

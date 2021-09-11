@@ -1,12 +1,8 @@
 import * as React from "react";
 import { Api } from "../../../../common/utils/Api";
-import Typography from "@material-ui/core/Typography";
 import { IItemInfo } from "../../../../common/definitions/api/IItemInfo";
-import {
-  ItemInfosContainer,
-  ItemInfosDetails,
-  NoMarginList
-} from "./CommonStyles";
+import { ItemInfosContainer, ItemInfosDetails, NoMarginList } from "./CommonStyles";
+import styled from "styled-components";
 
 export interface IItemInfoRendererProps {
   itemName: string;
@@ -40,19 +36,18 @@ export class ItemInfoRenderer extends React.PureComponent<
 
     return (
       <ItemInfosContainer>
-        <Typography variant="h6">Item Info</Typography>
         <ItemInfosDetails>
           <div>
             {itemInfos.image && (
-              <img
+              <StyledImg
                 src={`${process.env.PUBLIC_URL}/images/${itemInfos.image}`}
                 alt={this.props.itemName}
               />
             )}
-            <div>{itemInfos.type}</div>
           </div>
           <div>
             <NoMarginList>
+              <li key={itemInfos.type}>{'Item Type: ' + itemInfos.type}</li>
               {itemInfos.props.map(p => (
                 <li key={p}>{p}</li>
               ))}
@@ -63,3 +58,7 @@ export class ItemInfoRenderer extends React.PureComponent<
     );
   }
 }
+
+const StyledImg = styled.img`
+  max-height: 250px;
+`;

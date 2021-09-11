@@ -41,15 +41,14 @@ export class RunewordInfoRenderer extends React.PureComponent<
 
     return (
       <ItemInfosContainer>
-        <Typography variant="h6">Runeword Info</Typography>
         <ItemInfosDetails>
           <div>
             {runewordInfos.runes.map((r, i) => (
               <RuneContainer key={r + i}>
-                <img
+                <StyledImg
                   src={`${
                     process.env.PUBLIC_URL
-                  }/images/runes/${r.toLowerCase()}.gif`}
+                  }/images/runes/${r.toLowerCase()}-d2r.png`}
                   alt={r}
                   title={r}
                 />
@@ -111,4 +110,8 @@ const RuneContainer = styled.div`
   span {
     padding-left: ${p => p.theme.spacing(1)}px;
   }
+`;
+
+const StyledImg = styled.img`
+  max-height: 28px;
 `;

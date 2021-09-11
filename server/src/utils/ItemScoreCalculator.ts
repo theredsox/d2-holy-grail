@@ -27,6 +27,9 @@ export class ItemScoreCalculator {
       sets: {
         missing: 127
       },
+      runes: {
+        missing: 33
+      },
       itemScore: 0
     };
     if (data && data.uniques) {
@@ -62,6 +65,14 @@ export class ItemScoreCalculator {
       );
       partyGrailData.sets.missing = missingSets.missing;
       partyGrailData.itemScore += missingSets.score;
+    }
+    if (data && data.runes) {
+      let missingRunes = ItemScoreCalculator.sumMissing(
+        () => data.runes,
+        new MissingItems()
+      );
+      partyGrailData.sets.missing = missingRunes.missing;
+      partyGrailData.itemScore += missingRunes.score;
     }
     return partyGrailData;
   };

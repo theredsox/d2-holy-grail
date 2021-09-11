@@ -16,6 +16,8 @@ import { AppThemeContext, IAppTheme, defaultTheme } from "./AppThemeContext";
 import { PaletteOptions } from "@material-ui/core/styles/createPalette";
 import { LocalStorageHandler } from "./common/utils/LocalStorageHandler";
 
+require('./App.css');
+
 interface IBuiltAppTheme {
   theme: Theme;
   title: string;
@@ -96,6 +98,13 @@ export const App: FC = () => {
         palette: {
           ...newTheme.theme.palette,
           ...(isDarkThemeEnabled() && ({ type: "dark" } as PaletteOptions))
+        },
+        overrides: {
+          MuiPaper: {
+            root: {
+                margin: '10px'
+            },
+          },
         }
       })
     };
@@ -118,5 +127,5 @@ const HeaderContainer = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  padding-top: ${p => p.theme.spacing(1) * 6}px;
+  padding-top: 10px;
 `;

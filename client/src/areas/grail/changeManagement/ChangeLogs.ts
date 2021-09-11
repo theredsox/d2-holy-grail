@@ -3,6 +3,19 @@ export type ChangeLogCollection = {
 };
 
 export const changeLogs: ChangeLogCollection = {
+  "2.1.1": [
+    {
+      change: `Added rune tracking for grail, D2R images, and UI tweaks:`,
+      children: [
+        "Updated and added D2R images for all existing unqiues, sets, runes",
+        "Reorg of right side buttons and main menu",
+        "Added rune tracking towards main grail",
+        "Added flex layout to better utilize space at various screen sizes",
+        "Reduced padding in various places to better utilize screen space",
+        "Sets tab now uses a 'cards' layout, added completed set pics, and fullsize on click"
+      ]
+    }
+  ],
   "2.1.0": [
     {
       change: `Option to duplicate a grail:`,

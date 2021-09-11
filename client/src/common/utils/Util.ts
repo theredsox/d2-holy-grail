@@ -1,6 +1,8 @@
 import { Item } from "../definitions/union/Item";
 import { Runeword } from "../definitions/business/Runeword";
 import { AllBusinessGrailsType } from "../definitions/business/AllBusinessGrailsType";
+import { Rune } from "../definitions/business/Rune";
+import { IItemProps } from "../../areas/grail/dataRenderer/CheckboxItemRenderer";
 
 export class Util {
   public static isItem(data: any): boolean {
@@ -9,6 +11,7 @@ export class Util {
       data &&
       typeof data === "object" &&
       (data instanceof Runeword ||
+       data instanceof Rune ||
         (!Object.keys(data).length ||
           Object.keys(itemProto).some(k => data.hasOwnProperty(k))))
     );
@@ -76,5 +79,12 @@ export class Util {
     }
 
     return value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
+  public static hasImage(props: IItemProps): boolean {
+    const itemProto = new Item();
+    return (
+      props.ancestorKeys && props.ancestorKeys.indexOf("Runes") > -1
+    );
   }
 }

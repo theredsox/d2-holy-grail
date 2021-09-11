@@ -6,10 +6,10 @@ export const NoMarginList = styled.ul`
 `;
 
 export const ItemInfosContainer = styled.div`
-  margin-top: ${p => p.theme.spacing(1) * 2}px;
+  margin-bottom: 0px;
 `;
 
 export const ItemInfosDetails = styled.div`
   display: flex;
-  margin-top: ${p => p.theme.spacing(1)}px;
+  margin-top: 0px;
 `;

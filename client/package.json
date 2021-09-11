@@ -17,6 +17,7 @@
     "react-app-polyfill": "^1.0.1",
     "react-dom": "^16.8.6",
     "react-dropzone": "^10.1.5",
+    "react-modal": "^3.14.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.0.1",
     "rxjs": "^6.5.2",
