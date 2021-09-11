@@ -77,7 +77,7 @@ export class PartyTable extends React.Component<
         statRow.rune = user.data ? user.data.runes.missing : ItemTotal.Runes;
         statRow.itemScore = user.data ? user.data.itemScore : 0;
         statRow.total =
-          statRow.uniqArm + statRow.uniqWep + statRow.uniqOth + statRow.set;
+          statRow.uniqArm + statRow.uniqWep + statRow.uniqOth + statRow.set + statRow.rune;
         stats.push(statRow);
       }
       this.sortData(stats, this.state.sorted);
