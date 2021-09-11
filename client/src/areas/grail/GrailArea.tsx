@@ -25,14 +25,9 @@ import { ListItemWithProgress } from "../../common/components/ListItemWithProgre
 import styled from "styled-components";
 import { IGrailAreaRouterParams } from "../../RouteManager";
 import { GrailVersionMigrator } from "./migrations/GrailVersionMigrator";
-import {
-  AppThemeContext,
-  IAppTheme,
-  ethTheme,
-  runewordTheme
-} from "../../AppThemeContext";
-import { ButtonWithProgress } from "../../common/components/ButtonWithProgress";
+import { AppThemeContext, IAppTheme, ethTheme, runewordTheme } from "../../AppThemeContext";
 import { CopyGrailListItem } from "./dataManipulation/clickable-components/CopyGrailListItem";
+import { DividerProps } from "@material-ui/core/Divider";
 
 interface IGrailAreaState {
   filterResult?: IFilterResult;
@@ -125,14 +120,6 @@ const GrailAreaInternal: FC<{
           <ChangeDiscarder />
         </ButtonRow>
         <ButtonRow>
-          <GrailTypeToggler grailMode={GrailManager.current.grailMode} />
-        </ButtonRow>
-        <ButtonWithProgress
-          onClick={() => toggleDarkTheme()}
-          text="Toggle dark mode"
-          firstIcon="brightness_3"
-        />
-        <ButtonRow>
           <MenuButton>
             <ListItemWithProgress
               primaryText={GrailManager.current.address}
@@ -141,23 +128,30 @@ const GrailAreaInternal: FC<{
               }
               firstIcon="person"
             />
-            <Divider />
+            <SettingsListItem
+              onSettingsChanged={() =>
+                setState({ ...state, data: GrailManager.current.grail })
+              }
+            />
+            <ListItemWithProgress
+              onClick={() => toggleDarkTheme()}
+              primaryText="Toggle dark mode"
+              firstIcon="brightness_3"
+        />
+            <StyledDivider />
             <GrailToServerSaver renderAsListItem={true} />
             <ChangeDiscarder renderAsListItem={true} />
+            <StyledDivider />
             <ToggleAllListItem
               onToggle={d => setState({ ...state, data: d })}
             />
             <ImportListItem />
             <ExportListItem />
             <CopyGrailListItem />
+            <StyledDivider />
             <GrailTypeToggler
               renderAsListItem={true}
               grailMode={GrailManager.current.grailMode}
-            />
-            <SettingsListItem
-              onSettingsChanged={() =>
-                setState({ ...state, data: GrailManager.current.grail })
-              }
             />
           </MenuButton>
         </ButtonRow>
@@ -227,3 +221,10 @@ const GrailAreaWrapper: FC<RouteComponentProps<
 };
 
 export const GrailArea = withRouter(GrailAreaWrapper);
+
+const StyledDivider: React.ComponentType<DividerProps> = styled(Divider)`
+  && {
+    border: 2px solid #f7f7f7;
+    height: 5px;
+  }
+`;
