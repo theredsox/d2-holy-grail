@@ -3,6 +3,15 @@ export type ChangeLogCollection = {
 };
 
 export const changeLogs: ChangeLogCollection = {
+  "2.1.2": [
+    {
+      change: `Added party totals statistics:`,
+      children: [
+        "Added combined statistics for the party. The combined set of missing items.",
+        "Tweaked the party statistics layout a bit."
+      ]
+    }
+  ],
   "2.1.1": [
     {
       change: `Added rune tracking for grail, D2R images, and UI tweaks:`,
