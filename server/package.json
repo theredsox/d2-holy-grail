@@ -1,6 +1,6 @@
 {
   "name": "d2-holy-grail-server",
-  "version": "1.0.0",
+  "version": "2.1.2",
   "scripts": {
     "dev": "ts-node-dev ./src/Init.ts ",
     "build": "tsc",

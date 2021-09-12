@@ -3,12 +3,12 @@ import Table, { TableProps } from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell, { TableCellProps } from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import TableRow, { TableRowProps } from "@material-ui/core/TableRow";
 import Paper, { PaperProps } from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography/Typography";
 import { IPartyTableProps } from "./PartyTable";
 import styled from "styled-components";
-import { IPartyData } from "../../common/definitions/union/IPartyData";
+import { IPartyData, IUserGrailData } from "../../common/definitions/union/IPartyData";
 import Icon, { IconProps } from "@material-ui/core/Icon/Icon";
 import { DataTableColumnHeader } from "./components/DataTableColumnHeader";
 import { PartyManager } from "./PartyManager";
@@ -37,6 +37,62 @@ class Stats {
   public constructor(public name: string) {}
 }
 
+class Overall {
+  public uniqArm: string = "";
+  public uniqWep: string = "";
+  public uniqOth: string = "";
+  public set: string = "";
+  public rune: string = "";
+
+  public constructor(public name: string) {}
+
+  public add(data: IUserGrailData) {
+    if (!data) {
+      return;
+    }
+
+    this.uniqArm = this.unionBits(this.uniqArm, data.uniqueArmor.foundBits);
+    this.uniqWep = this.unionBits(this.uniqWep, data.uniqueWeapons.foundBits);
+    this.uniqOth = this.unionBits(this.uniqOth, data.uniqueOther.foundBits);
+    this.set = this.unionBits(this.set, data.sets.foundBits);
+    this.rune = this.unionBits(this.rune, data.runes.foundBits);
+  }
+
+  public getStats(): Stats {
+    let party = new Stats("Totals");
+
+    party.uniqArm = this.countMissing(this.uniqArm);
+    party.uniqWep = this.countMissing(this.uniqWep);
+    party.uniqOth = this.countMissing(this.uniqOth);
+    party.set = this.countMissing(this.set);
+    party.rune = this.countMissing(this.rune);
+
+    party.total = party.uniqArm + party.uniqWep + party.uniqOth + party.set + party.rune;
+    party.itemScore = -1;
+
+    return party;
+  }
+
+  private countMissing(bitstring: string): number {
+    return ((bitstring || '').match(/0/g) || []).length;
+  }
+
+  // Unions two bitstrings; ("001", "101") => "101"
+  private unionBits(sum: string, toUnion: string): string {
+
+    if (sum === "") {
+      return toUnion;
+    }
+
+    let union = ""
+    let max = Math.max(sum.length, toUnion.length);
+    for (let i = 0; i < max; i++) {
+      union += sum[i] === "1" || toUnion[i] === "1" ? "1" : "0";
+    }
+    return union;
+  }
+}
+
 export class PartyTable extends React.Component<
   IPartyTableProps,
   IPartyTableState
@@ -60,7 +116,10 @@ export class PartyTable extends React.Component<
 
   public render() {
     let stats: Stats[] = [];
+    let partyStats: Stats;
+
     if (this.state.data.users) {
+      let overall = new Overall("Overall");
       for (let i = 0; i < this.state.data.users.length; i++) {
         let user = this.state.data.users[i];
         let statRow = new Stats(user.username);
@@ -79,8 +138,13 @@ export class PartyTable extends React.Component<
         statRow.total =
           statRow.uniqArm + statRow.uniqWep + statRow.uniqOth + statRow.set + statRow.rune;
         stats.push(statRow);
+
+        overall.add(user.data);
       }
+      
       this.sortData(stats, this.state.sorted);
+
+      partyStats = overall.getStats();
     }
 
     return (
@@ -149,10 +213,13 @@ export class PartyTable extends React.Component<
             </TableHead>
             <TableBody>
               {stats.length !== 0 &&
-                stats.map((s, i) => PartyTable.renderRow(s, i % 2 === 0))}
+                stats.map((s, i) => PartyTable.renderRow(s, i % 2 === 0, false))}
+              {stats.length !== 0 && PartyTable.renderRow(partyStats, stats.length % 2 === 0, true)}
               {stats.length === 0 && PartyTable.renderEmptyRow()}
             </TableBody>
           </StyledTable>
+        </StyledPaper>
+        <StyledPaper>
           <TableFootNote variant="body2">
             Notes:
             <NoteList>
@@ -168,23 +235,30 @@ export class PartyTable extends React.Component<
     );
   }
 
-  private static renderRow(stats: Stats, isSelected?: boolean) {
+  private static renderRow(stats: Stats, isSelected?: boolean, party?: boolean) {
     return (
-      <TableRow key={`${stats.name}Stat`} hover={true} selected={isSelected}>
+      <StyledTableRow key={`${stats.name}Stat`} hover={true} selected={isSelected} className={party ? "partyRow" : ""}>
         <StyledTableCell component="th" scope="row">
           <RowHeader>
-            {stats.total === 0 && (
+            {stats.total === 0 && !party && (
               <PerfectIcon title="This user has completed their grail!">
                 star
               </PerfectIcon>
             )}
+            {stats.total === 0 && party && (
+              <PerfectIcon title="The party has completed the grail as a group!">
+                star
+              </PerfectIcon>
+            )}
+            {!party ? (
             <UserLink
               href={"/" + stats.name}
               target="_blank"
               rel="noopener noreferrer"
             >
               {stats.name}
-            </UserLink>
+            </UserLink>) :
+            (<span style={{cursor: "default"}}>{stats.name}</span>)}
           </RowHeader>
         </StyledTableCell>
         <StyledTableCell>{stats.total}</StyledTableCell>
@@ -193,8 +267,8 @@ export class PartyTable extends React.Component<
         <StyledTableCell>{stats.uniqOth}</StyledTableCell>
         <StyledTableCell>{stats.set}</StyledTableCell>
         <StyledTableCell>{stats.rune}</StyledTableCell>
-        <StyledTableCell>{stats.itemScore}</StyledTableCell>
-      </TableRow>
+        <StyledTableCell>{stats.itemScore > -1 ? (stats.itemScore) : ('N/A')}</StyledTableCell>
+      </StyledTableRow>
     );
   }
 
@@ -289,3 +363,10 @@ const NoteList = styled.ul`
   margin-top: 0;
   padding-left: ${p => p.theme.spacing(3)}px;
 `;
+
+const StyledTableRow: React.ComponentType<TableRowProps> = styled(TableRow)`
+  &.partyRow {
+    border-top: 2px solid rgb(191 191 191);
+    box-shadow: 0 -5px 5px rgb(0 0 0 / 10%);
+  }
+`

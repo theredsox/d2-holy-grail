@@ -18,4 +18,5 @@ export interface IUserGrailData {
 
 export interface ICategoryStatsData {
   missing: number;
+  foundBits: string;
 }
