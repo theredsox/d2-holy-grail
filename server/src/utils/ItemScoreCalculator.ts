@@ -7,6 +7,7 @@ export class MissingItems {
   public score: number = 0;
   public found: number = 0;
   public foundBits: string = "";
+  public itemScores: number[] = [];
 
   public constructor() {}
 }
@@ -18,23 +19,28 @@ export class ItemScoreCalculator {
     let partyGrailData = {
       uniqueArmor: {
         missing: 123,
-        foundBits: ""
+        foundBits: "",
+        itemScores: []
       },
       uniqueWeapons: {
         missing: 197,
-        foundBits: ""
+        foundBits: "",
+        itemScores: []
       },
       uniqueOther: {
         missing: 59,
-        foundBits: ""
+        foundBits: "",
+        itemScores: []
       },
       sets: {
         missing: 127,
-        foundBits: ""
+        foundBits: "",
+        itemScores: []
       },
       runes: {
         missing: 33,
-        foundBits: ""
+        foundBits: "",
+        itemScores: []
       },
       itemScore: 0
     };
@@ -46,6 +52,7 @@ export class ItemScoreCalculator {
         );
         partyGrailData.uniqueWeapons.foundBits = missingWeps.foundBits;
         partyGrailData.uniqueWeapons.missing = missingWeps.missing;
+        partyGrailData.uniqueWeapons.itemScores = missingWeps.itemScores;
         partyGrailData.itemScore += missingWeps.score;
       }
       if (data.uniques.armor) {
@@ -55,6 +62,7 @@ export class ItemScoreCalculator {
         );
         partyGrailData.uniqueArmor.foundBits = missingArmor.foundBits;
         partyGrailData.uniqueArmor.missing = missingArmor.missing;
+        partyGrailData.uniqueArmor.itemScores = missingArmor.itemScores;
         partyGrailData.itemScore += missingArmor.score;
       }
       if (data.uniques.other) {
@@ -64,6 +72,7 @@ export class ItemScoreCalculator {
         );
         partyGrailData.uniqueOther.foundBits = missingOther.foundBits;
         partyGrailData.uniqueOther.missing = missingOther.missing;
+        partyGrailData.uniqueOther.itemScores = missingOther.itemScores;
         partyGrailData.itemScore += missingOther.score;
       }
     }
@@ -74,6 +83,7 @@ export class ItemScoreCalculator {
       );
       partyGrailData.sets.foundBits = missingSets.foundBits;
       partyGrailData.sets.missing = missingSets.missing;
+      partyGrailData.sets.itemScores = missingSets.itemScores;
       partyGrailData.itemScore += missingSets.score;
     }
     if (data && data.runes) {
@@ -83,6 +93,7 @@ export class ItemScoreCalculator {
       );
       partyGrailData.runes.foundBits = missingRunes.foundBits;
       partyGrailData.runes.missing = missingRunes.missing;
+      partyGrailData.runes.itemScores = missingRunes.itemScores;
       partyGrailData.itemScore += missingRunes.score;
     }
     return partyGrailData;
@@ -110,6 +121,7 @@ export class ItemScoreCalculator {
         if (!possibleItem.wasFound) {
           missing.missing++;
           missing.foundBits += "0";
+          missing.itemScores.push(0);
         } else {
           missing.found++;
           missing.foundBits += "1";
@@ -125,6 +137,7 @@ export class ItemScoreCalculator {
             }
           }
           missing.score += itemScore;
+          missing.itemScores.push(itemScore);
         }
       } else {
         ItemScoreCalculator.sumMissing(() => possibleItem, missing, key);

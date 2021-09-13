@@ -4,7 +4,7 @@ import Table, { TableProps } from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell, { TableCellProps } from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import TableRow, { TableRowProps } from "@material-ui/core/TableRow";
 import Paper, { PaperProps } from "@material-ui/core/Paper";
 import { Icon } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography/Typography";
@@ -125,13 +125,13 @@ export class StatisticsTable extends React.Component<
         <StyledPaper>
           <StyledTable>
             <TableHead>
-              <TableRow>
+              <StyledRow>
                 <StyledCell>&nbsp;</StyledCell>
                 <StyledCell align="right">Exist</StyledCell>
                 <StyledCell align="right">Owned</StyledCell>
                 <StyledCell align="right">Remaining</StyledCell>
                 <StyledCell align="right">% Completed</StyledCell>
-              </TableRow>
+              </StyledRow>
             </TableHead>
             <TableBody>
               {stats.map(s => StatisticsTable.renderRow(s))}
@@ -146,7 +146,7 @@ export class StatisticsTable extends React.Component<
 
   private static renderRow(stats: Stats, isSelected?: boolean) {
     return (
-      <TableRow key={`${stats.name}Stat`} hover={true} selected={isSelected}>
+      <StyledRow key={`${stats.name}Stat`} hover={true} selected={isSelected}>
         <StyledCell component="th" scope="row">
           <RowHeader>
             {stats.icon && <Icon title={stats.iconTooltip}>{stats.icon}</Icon>}
@@ -161,7 +161,7 @@ export class StatisticsTable extends React.Component<
             2
           )}
         </StyledCell>
-      </TableRow>
+      </StyledRow>
     );
   }
 
@@ -211,8 +211,12 @@ const StyledTable: React.ComponentType<TableProps> = styled(Table)`
   }
 `;
 
-const RowHeader = styled.div`
-  display: flex;
+const StyledRow: React.ComponentType<TableRowProps> = styled(TableRow)`
+  && {
+    & > :first-child {
+      padding-left: 16px;
+    }
+  }
 `;
 
 const StyledCell: React.ComponentType<TableCellProps> = styled(TableCell)`
@@ -220,4 +224,8 @@ const StyledCell: React.ComponentType<TableCellProps> = styled(TableCell)`
     padding: 10px 5px 10px 5px;
     white-space: nowrap;
   }
+`;
+
+const RowHeader = styled.div`
+  display: flex;
 `;

@@ -44,6 +44,12 @@ class Overall {
   public set: string = "";
   public rune: string = "";
 
+  public uniqArmScores: number[] = [];
+  public uniqWepScores: number[] = [];
+  public uniqOthScores: number[] = [];
+  public setScores: number[] = [];
+  public runeScores: number[] = [];
+
   public constructor(public name: string) {}
 
   public add(data: IUserGrailData) {
@@ -56,6 +62,12 @@ class Overall {
     this.uniqOth = this.unionBits(this.uniqOth, data.uniqueOther.foundBits);
     this.set = this.unionBits(this.set, data.sets.foundBits);
     this.rune = this.unionBits(this.rune, data.runes.foundBits);
+
+    this.uniqArmScores = this.unionArrays(this.uniqArmScores, data.uniqueArmor.itemScores);
+    this.uniqWepScores = this.unionArrays(this.uniqWepScores, data.uniqueWeapons.itemScores);
+    this.uniqOthScores = this.unionArrays(this.uniqOthScores, data.uniqueOther.itemScores);
+    this.setScores = this.unionArrays(this.setScores, data.sets.itemScores);
+    this.runeScores = this.unionArrays(this.runeScores, data.runes.itemScores);
   }
 
   public getStats(): Stats {
@@ -68,7 +80,12 @@ class Overall {
     party.rune = this.countMissing(this.rune);
 
     party.total = party.uniqArm + party.uniqWep + party.uniqOth + party.set + party.rune;
-    party.itemScore = -1;
+    party.itemScore = 
+      this.sumItems(this.uniqArmScores) + 
+      this.sumItems(this.uniqWepScores) + 
+      this.sumItems(this.uniqOthScores) + 
+      this.sumItems(this.setScores) +
+      this.sumItems(this.runeScores);
 
     return party;
   }
@@ -77,11 +94,38 @@ class Overall {
     return ((bitstring || '').match(/0/g) || []).length;
   }
 
+  private sumItems(items: number[]) {
+    return items.reduce((sum, item) => sum + item)
+  }
+
+  // Unions two bitarrays; (["001"], ["101"]) => ["101"]
+  private unionArrays(sum: number[], toUnion: number[]): number[] {
+
+    if (!sum || sum.length == 0) {
+      return toUnion;
+    }
+
+    if (!toUnion || toUnion.length == 0) {
+      return sum;
+    }
+
+    let union = [];
+    let max = Math.max(sum.length, toUnion.length);
+    for (let i = 0; i < max; i++) {
+      union.push(Math.max(sum[i], toUnion[i]));
+    }
+    return union;
+  }
+
   // Unions two bitstrings; ("001", "101") => "101"
   private unionBits(sum: string, toUnion: string): string {
 
     if (sum === "") {
       return toUnion;
+    }
+
+    if (toUnion === "") {
+      return sum;
     }
 
     let union = ""
