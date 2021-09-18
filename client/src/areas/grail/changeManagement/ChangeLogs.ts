@@ -3,6 +3,15 @@ export type ChangeLogCollection = {
 };
 
 export const changeLogs: ChangeLogCollection = {
+  "2.1.3": [
+    {
+      change: `Added party view to leader grail:`,
+      children: [
+        "Party can visualize combined progress through the leader's login using a new 'Show party view' checkbox.",
+        "Party view is read only, progress updates should still be entered by individual party members."
+      ]
+    }
+  ],
   "2.1.2": [
     {
       change: `Added party totals statistics:`,

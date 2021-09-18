@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FC, useContext, useEffect, useState } from "react";
 import { GrailManager } from "./GrailManager";
-import { CircularProgress, Divider } from "@material-ui/core";
+import { Checkbox, CircularProgress, Divider } from "@material-ui/core";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { ILoginInfo } from "../home/LoginForm";
 import { SettingsListItem } from "./dataManipulation/clickable-components/SettingsListItem";
@@ -35,6 +35,7 @@ interface IGrailAreaState {
   error?: IGrailError;
   loading?: boolean;
   hasGrailVersionChange?: boolean;
+  partyView?: boolean;
 }
 
 const GrailAreaInternal: FC<{
@@ -49,7 +50,8 @@ const GrailAreaInternal: FC<{
       grailMode,
       loginInfo.address,
       loginInfo.password,
-      loginInfo.keepLoggedIn
+      loginInfo.keepLoggedIn,
+      state.partyView
     );
     dataManager.initialize().subscribe(
       () => {
@@ -96,6 +98,11 @@ const GrailAreaInternal: FC<{
     return null;
   }
 
+  let handleCheckBox = event => {
+    const partyStats = event.target.checked;
+    GrailManager.current.initializeGrailData(partyStats);
+  };
+
   return (
     <div>
       {!state.hasGrailVersionChange && <VersionNotifier />}
@@ -103,6 +110,15 @@ const GrailAreaInternal: FC<{
       <div>
         <GrailFilters data={state.data} onFilterResult={onFilterResult} />
       </div>
+      {GrailManager.current.isPartyLeader && (
+        <div>
+          <Checkbox
+            defaultChecked={!!state.partyView}
+            onChange={handleCheckBox}
+          />
+          Show party view?
+        </div>
+      )}
       <div>
         <TabRenderer allData={state.data} filterResult={state.filterResult} />
       </div>

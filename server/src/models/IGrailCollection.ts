@@ -11,4 +11,6 @@ export interface IGrailCollection {
   runewordData?: any;
   partyData?: any;
   settings?: any;
+  readOnly?: boolean;
+  hasParty?: boolean;
 }

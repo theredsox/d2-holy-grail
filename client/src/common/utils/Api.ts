@@ -45,9 +45,14 @@ export class Api {
   }
 
   public static getGrail(
-    address: string
+    address: string,
+    partyView?: boolean
   ): Observable<IApiResponse<IHolyGrailApiModel>> {
-    return this.fetchToObservable(fetch(Api.grailApiUrl + address));
+    let url = Api.grailApiUrl + address;
+    if (partyView) {
+      url += "?partyView=true";
+    }
+    return this.fetchToObservable(fetch(url));
   }
 
   public static updateGrail(

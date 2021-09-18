@@ -12,4 +12,6 @@ export interface IHolyGrailApiModel {
   token: string;
   settings: IGrailSettings;
   version?: string;
+  readOnly?: boolean;
+  hasParty?: boolean;
 }

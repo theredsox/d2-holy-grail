@@ -9,4 +9,6 @@ export interface IHolyGrail {
   runeData?: any;
   partyData?: any;
   settings?: any;
+  readOnly?: boolean;
+  hasParty?: boolean;
 }

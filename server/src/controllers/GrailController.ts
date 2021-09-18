@@ -3,8 +3,10 @@ import { Db, Collection, MongoError } from "mongodb";
 import { ConfigManager } from "../ConfigManager";
 import { IGrailCollection } from "../models/IGrailCollection";
 import { IHolyGrail } from "../models/IHolyGrail";
+import { IParty } from "../models/IParty";
 import { MongoErrorCodes } from "../models/MongoErrorCodes";
 import { ItemScoreCalculator } from "../utils/ItemScoreCalculator";
+import { Item } from "../definitions/Item";
 
 export class GrailController {
   private get grailCollection(): Collection<IGrailCollection> {
@@ -51,12 +53,28 @@ export class GrailController {
       GrailController.sendUnknownError(res, err);
     }
   };
-
+  
   public get = async (req: Request, res: Response) => {
     const address = req.params.address;
-    await this.getByAddress(address, res, grail =>
-      GrailController.mapAndReturnGrailData(address, res, grail)
-    );
+    const partyView = req.query.partyView === 'true';
+
+    await this.getPartyByAddress(address, res, async party => {
+      await this.getByAddress(address, res, async grail => {
+        // If party found, flag hasParty so party view toggle
+        // is visible on the UI
+        if (party) {
+          grail.hasParty = true;
+        }
+
+        // If party view requested and this user is a party leader, 
+        // return the combined party data for viewing
+        if (partyView && party && party.userlist.length > 0) {
+          grail = await this.getPartyData(grail, party);
+        }
+        
+        GrailController.mapAndReturnGrailData(address, res, grail);
+      });
+    });
   };
 
   public updateSettings = async (req: Request, res: Response) => {
@@ -223,7 +241,9 @@ export class GrailController {
       runewordData: grail.runewordData,
       settings: grail.settings,
       token: grail.token,
-      version: grail.version
+      version: grail.version,
+      readOnly: grail.readOnly,
+      hasParty: grail.hasParty
     } as IHolyGrail);
   }
 
@@ -237,5 +257,119 @@ export class GrailController {
 
   public static trimAndToLower(value: string): string {
     return value ? value.toLowerCase().trim() : null;
+  }
+
+  // Gets a party collection from the db
+  private get partyCollection(): Collection<IParty> {
+    return this.db.collection<IParty>(ConfigManager.db.partyCollection);
+  }
+
+  // Finds a party by the leader's address
+  private async getPartyByAddress(
+    address: string,
+    res: Response,
+    onSuccess: (party: IParty) => any
+  ) {
+    try {
+      const party = await this.partyCollection.findOne({
+        address: GrailController.trimAndToLower(address)
+      });
+
+      onSuccess(party);
+    } catch (err) {
+      GrailController.sendUnknownError(res, err);
+    }
+  }
+
+  // Maps a party's grails onto the party leader's grail. Showing
+  // a read only view of the combined party's grail progress.
+  private getPartyData = async (grail: IGrailCollection, party: IParty): Promise<any> => {
+    const grails = await this.grailCollection
+      .find({
+        address: {
+          $in: party.userlist
+        }
+      })
+      .toArray();
+
+    return this.mapGrailsToPartyGrailData(grail, grails);
+  };
+
+  // Maps a party's grails onto the party leader's grail. Showing
+  // a read only view of the combined party's grail progress.
+  private mapGrailsToPartyGrailData = (grail: IGrailCollection, grails: IGrailCollection[]) => {
+    let partyData = {
+      address: grail.address,
+      password: grail.password,
+      token: grail.token,
+      version: grail.version,
+      created: grail.created,
+      modified: grail.modified,
+      updateCount: 0,
+      data: {},
+      ethData: {},
+      runewordData: {},
+      partyData: grail.partyData,
+      settings: grail.settings,
+      readOnly: true,
+      hasParty: grail.hasParty
+    } as IGrailCollection;
+    grails.forEach(member => {
+      partyData.updateCount += member.updateCount;
+      partyData.data = this.mergeData(partyData.data, member.data);
+      partyData.ethData = this.mergeData(partyData.ethData, member.ethData);
+      partyData.runewordData = this.mergeData(partyData.runewordData, member.runewordData);
+    });
+    return partyData;
+  };
+
+  // Recursively check for differences between "sum" party data and
+  // member data. Adds missing data, and runs conflict resolution on
+  // differences.
+  private mergeData(partyData, memberData): any {
+
+    // If at the leaf node, aka item, merge as needed
+    if (partyData instanceof Item) {
+      return this.mergeItem(partyData as Item, memberData as Item);
+    }
+
+    // Otherwise loop through the attributes
+    for (const key in memberData) {
+      // If property exists in party
+      if(partyData.hasOwnProperty(key)) {
+        // If data is itself an object, recursive merge
+        if (memberData[key] != null && memberData[key].constructor === Object) {
+          partyData[key] = this.mergeData(partyData[key], memberData[key]);
+        } else {
+          // Unexpected property that isn't part of an Item
+          // Careful merge only by null data
+          if (partyData[key] === null && memberData[key] != null) {
+            partyData[key] = memberData[key];
+          }
+        }
+      } else {
+          // Data doesn't exist yet in party, just copy memberData
+          partyData[key] = memberData[key];
+      }
+    }
+
+    return partyData;
+  }
+
+  // Merges the passed member Item into the "sum" party Item
+  private mergeItem(partyItem: Item, memberItem: Item): Item {
+
+    partyItem.isPerfect = partyItem.isPerfect || memberItem.isPerfect;
+    partyItem.wasFound =  partyItem.wasFound || memberItem.wasFound;
+
+    // If there is a note on the member, merge it in
+    if (memberItem.note && memberItem.note.length > 0) {
+      if (partyItem.note && partyItem.note.length > 0) {
+        partyItem.note += " --- ";
+      }
+      partyItem.note += memberItem.note;
+    }
+
+    return partyItem;
   }
 }

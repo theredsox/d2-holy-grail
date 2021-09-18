@@ -33,7 +33,12 @@ export class GrailManager {
   public hasLocalChanges$ = this.hasLocalChanges.asObservable();
 
   public get isReadOnly(): boolean {
-    return !this.password;
+    // apiData is readOnly for party view mode
+    return !this.password || this.apiData.readOnly;
+  }
+
+  public get isPartyLeader(): boolean {
+    return this.apiData.hasParty;
   }
 
   public get allApiData(): IHolyGrailApiModel {
@@ -98,13 +103,15 @@ export class GrailManager {
     grailMode: GrailMode,
     address: string,
     password?: string,
-    savePassword?: boolean
+    savePassword?: boolean,
+    partyView?: boolean
   ): GrailManager {
     return (this._current = new GrailManager(
       grailMode,
       address,
       password,
-      savePassword
+      savePassword,
+      partyView
     ));
   }
 
@@ -112,7 +119,8 @@ export class GrailManager {
     private _grailMode: GrailMode,
     public readonly address: string,
     private password?: string,
-    savePassword?: boolean
+    savePassword?: boolean,
+    public partyView?: boolean
   ) {
     if (!address) {
       throw new Error("Address must be specified");
@@ -225,18 +233,22 @@ export class GrailManager {
     }
   }
 
-  private initializeGrailData() {
+  // TODO: Making this a public method is a hack. Tried to find a better way to 
+  // refresh the data on clicking of the party view checkbox, but wasn't having
+  // any luck.
+  public initializeGrailData(partyView?: boolean) {
     const cachedData = this.grailLocalStorage.getValue();
 
     if (cachedData) {
       this.emitData(cachedData);
     }
 
-    Api.getGrail(this.address).subscribe(
+    Api.getGrail(this.address, partyView ? partyView : this.partyView).subscribe(
       response => {
         const apiData = response.data;
         if (
-          !cachedData ||
+          !cachedData || 
+          cachedData.readOnly != apiData.readOnly || // Switching in and out of party view
           (cachedData.token !== apiData.token &&
             !this.hasLocalChangesStorage.getValue())
         ) {
