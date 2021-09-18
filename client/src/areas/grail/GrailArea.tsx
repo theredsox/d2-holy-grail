@@ -111,13 +111,13 @@ const GrailAreaInternal: FC<{
         <GrailFilters data={state.data} onFilterResult={onFilterResult} />
       </div>
       {GrailManager.current.isPartyLeader && (
-        <div>
+        <PartyViewDiv>
           <Checkbox
             defaultChecked={!!state.partyView}
             onChange={handleCheckBox}
           />
           Show party view?
-        </div>
+        </PartyViewDiv>
       )}
       <div>
         <TabRenderer allData={state.data} filterResult={state.filterResult} />
@@ -243,4 +243,9 @@ const StyledDivider: React.ComponentType<DividerProps> = styled(Divider)`
     border: 2px solid #f7f7f7;
     height: 5px;
   }
+`;
+
+const PartyViewDiv = styled.div`
+  float: right;
+  padding-right: 100px;
 `;
