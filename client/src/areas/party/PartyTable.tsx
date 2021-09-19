@@ -33,8 +33,11 @@ class Stats {
   public rune: number = 0;
   public total: number = 0;
   public itemScore: number = 0;
+  public name: string = ""
 
-  public constructor(public name: string) {}
+  public constructor(statName: string) {
+    this.name = statName[0].toUpperCase() + statName.substr(1);
+  }
 }
 
 class Overall {
@@ -206,7 +209,12 @@ export class PartyTable extends React.Component<
           <StyledTable>
             <TableHead>
               <TableRow>
-                <StyledTableCell>&nbsp;</StyledTableCell>
+                <DataTableColumnHeader
+                  onClick={this.changeSortingState}
+                  text="Member"
+                  sortText="name"
+                  showIcon={this.state.sorted === "name"}
+                />
                 <DataTableColumnHeader
                   onClick={this.changeSortingState}
                   text="Total"
@@ -336,7 +344,16 @@ export class PartyTable extends React.Component<
 
   private sortData = (data: Stats[], key: string) => {
     data.sort((a: Stats, b: Stats) => {
-      return key === "itemScore" ? b[key] - a[key] : a[key] - b[key];
+      if (key === "itemScore") {
+        // Ascending number
+        return b[key] - a[key];
+      } else if (key === "name") {
+        // Ascending text
+        return a[key].localeCompare(b[key]);
+      } else {
+        // Descending number
+        return a[key] - b[key];
+      }
     });
   };
 
