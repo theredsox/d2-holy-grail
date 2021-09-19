@@ -278,15 +278,15 @@ export class GrailManager {
   }
 
   private emitData(data: IHolyGrailApiModel) {
-    if (!data.data) {
+    if (!data.data || this.isEmpty(data.data)) {
       data.data = holyGrailSeedData;
     }
 
-    if (!data.ethData) {
+    if (!data.ethData || this.isEmpty(data.ethData)) {
       data.ethData = ethGrailSeedData;
     }
 
-    if (!data.runewordData) {
+    if (!data.runewordData || this.isEmpty(data.runewordData)) {
       data.runewordData = runewordGrailSeedData;
     }
 
@@ -297,5 +297,13 @@ export class GrailManager {
     this.apiData = data;
     this.businessData = new GrailBusinessModelWrapper(data);
     this.dataInitializer.next();
+  }
+
+  private isEmpty(obj) {
+    for(let key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
   }
 }

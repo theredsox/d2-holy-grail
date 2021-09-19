@@ -95,7 +95,7 @@ class Overall {
   }
 
   private sumItems(items: number[]) {
-    return items.reduce((sum, item) => sum + item)
+    return items && items.length > 0 ? items.reduce((sum, item) => sum + item) : 0;
   }
 
   // Unions two bitarrays; (["001"], ["101"]) => ["101"]
