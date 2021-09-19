@@ -38,17 +38,17 @@ class Stats {
 }
 
 class Overall {
-  public uniqArm: string = "";
-  public uniqWep: string = "";
-  public uniqOth: string = "";
-  public set: string = "";
-  public rune: string = "";
+  public uniqArm: string = "".padStart(ItemTotal.Armor, "0");
+  public uniqWep: string = "".padStart(ItemTotal.Weapons, "0");
+  public uniqOth: string = "".padStart(ItemTotal.Other, "0");
+  public set: string = "".padStart(ItemTotal.Sets, "0");
+  public rune: string = "".padStart(ItemTotal.Runes, "0");
 
-  public uniqArmScores: number[] = [];
-  public uniqWepScores: number[] = [];
-  public uniqOthScores: number[] = [];
-  public setScores: number[] = [];
-  public runeScores: number[] = [];
+  public uniqArmScores: number[] = Array(ItemTotal.Armor).fill(0);
+  public uniqWepScores: number[] = Array(ItemTotal.Weapons).fill(0);
+  public uniqOthScores: number[] = Array(ItemTotal.Other).fill(0);
+  public setScores: number[] = Array(ItemTotal.Sets).fill(0);
+  public runeScores: number[] = Array(ItemTotal.Runes).fill(0);
 
   public constructor(public name: string) {}
 
